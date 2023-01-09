@@ -2,13 +2,17 @@ import React, { useState } from "react";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import {
   Alert,
+  Dimensions,
   Pressable,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
+
+const windowWidth = Dimensions.get("window").width;
 
 const App = () => {
   const [items, setItems] = useState([]);
@@ -16,7 +20,7 @@ const App = () => {
 
   const btnAddHandler = () => {
     if (inputValue !== "") {
-      let array = inputValue.split(",");
+      let array = inputValue.split(",").reverse();
       array = array.map(
         (el) =>
           el !== "" && { itemName: el.trim().toLowerCase(), isSelected: false }
@@ -46,39 +50,42 @@ const App = () => {
     ]);
   };
 
-  const iconCircle = <Icon name="circle" size={20} color="#fff" />;
-  const iconCircleV = <Icon name="check-circle" size={20} color="#fff" />;
+  const iconCircle = <Icon name="circle" size={20} color="#000" />;
+  const iconCircleV = <Icon name="check-circle" size={20} color="#000" />;
   const iconSort = <Icon name="sort-amount-down-alt" size={26} color="#000" />;
   const iconPlus = <Icon name="plus" size={26} color="#000" />;
   const iconTrash = <Icon name="trash-alt" size={26} color="#000" />;
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Shopping List</Text>
-      <TextInput
-        style={styles.input}
-        onChangeText={setInputValue}
-        value={inputValue}
-      />
-      <View style={styles.flex}>
-        <Pressable
-          style={[styles.btn, styles.success, styles.flex]}
-          onPress={btnAddHandler}
-        >
-          <Text>{iconPlus}</Text>
-        </Pressable>
-        <Pressable
-          style={[styles.btn, styles.warning, styles.flex]}
-          onPress={sortFunction}
-        >
-          <Text>{iconSort}</Text>
-        </Pressable>
-        <Pressable
-          style={[styles.btn, styles.danger, styles.flex]}
-          onPress={newListHandler}
-        >
-          <Text>{iconTrash}</Text>
-        </Pressable>
+      <StatusBar backgroundColor="#102027" />
+      <View style={[styles.header, styles.flex]}>
+        <Text style={styles.title}>Shopping List</Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={setInputValue}
+          value={inputValue}
+        />
+        <View style={styles.flexBetween}>
+          <Pressable
+            style={[styles.btn, styles.success, styles.flex]}
+            onPress={btnAddHandler}
+          >
+            <Text>{iconPlus}</Text>
+          </Pressable>
+          <Pressable
+            style={[styles.btn, styles.warning, styles.flex]}
+            onPress={sortFunction}
+          >
+            <Text>{iconSort}</Text>
+          </Pressable>
+          <Pressable
+            style={[styles.btn, styles.danger, styles.flex]}
+            onPress={newListHandler}
+          >
+            <Text>{iconTrash}</Text>
+          </Pressable>
+        </View>
       </View>
       <ScrollView>
         {items.map((item, index) => (
@@ -110,49 +117,52 @@ const styles = StyleSheet.create({
     backgroundColor: "gray",
     alignItems: "center",
   },
+  header: {
+    width: windowWidth,
+    backgroundColor: "#37474f",
+  },
   title: {
     color: "white",
-    fontSize: 32,
-    marginTop: 30,
-    marginBottom: 10,
+    fontSize: 25,
+    marginVertical: 10,
   },
   input: {
     backgroundColor: "white",
     height: 40,
-    width: 260,
-    borderWidth: 1,
-    padding: 10,
     fontSize: 16,
+    width: windowWidth - 40,
+    borderRadius: 10,
+    padding: 10,
   },
   btn: {
-    width: 80,
+    width: (windowWidth - 60) / 3,
     height: 40,
-    borderWidth: 1,
     borderRadius: 10,
     marginVertical: 10,
-    marginHorizontal: 5,
   },
   itemContainer: {
-    width: 260,
-    backgroundColor: "black",
-    borderColor: "white",
-    borderWidth: 1,
-    borderRadius: 100,
-    padding: 5,
-    marginVertical: 2,
+    width: windowWidth,
+    backgroundColor: "white",
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    marginVertical: 1,
   },
   item: {
     fontSize: 20,
-    color: "white",
+    color: "black",
     alignSelf: "flex-start",
   },
   strike: {
     textDecorationLine: "line-through",
   },
   flex: {
-    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+  },
+  flexBetween: {
+    width: windowWidth - 40,
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   flexEnd: {
     alignSelf: "flex-end",
