@@ -3,10 +3,11 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import {
   Alert,
   Dimensions,
+  FlatList,
+  Image,
   KeyboardAvoidingView,
   Modal,
   Pressable,
-  Modal,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -22,6 +23,7 @@ const App = () => {
   const [items, setItems] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [btnsVisible, setbtnsVisible] = useState(false);
 
   const btnAddHandler = () => {
     if (inputValue !== "") {
@@ -57,16 +59,75 @@ const App = () => {
     ]);
   };
 
-  const iconCircle = <Icon name="circle" size={20} color="#000" />;
-  const iconCircleV = <Icon name="check-circle" size={20} color="#000" />;
-  const iconSort = <Icon name="sort-amount-down-alt" size={26} color="#000" />;
-  const iconPlus = <Icon name="plus" size={26} color="#000" />;
-  const iconTrash = <Icon name="trash-alt" size={26} color="#000" />;
-  const iconCart = <Icon name="cart-plus" size={26} color="#fff" />;
-  const iconDots = <Icon name="ellipsis-v" size={26} color="#fff" />;
+  const iconSquare = <Icon name="square" size={20} color="#e74c3c" />;
+  const iconSquareV = <Icon name="check-square" size={20} color="#00bc8c" />;
+  const iconSort = <Icon name="sort-amount-down-alt" size={26} color="#fff" />;
+  const iconPlus = <Icon name="plus" size={26} color="#fff" />;
+  const iconTrash = <Icon name="trash-alt" size={26} color="#fff" />;
+  const iconCart = <Icon name="shopping-basket" size={26} color="#fff" />;
+  const iconCD = <Icon name="chevron-circle-down" size={26} color="#2196f3" />;
+  const iconCU = <Icon name="chevron-circle-up" size={26} color="#00bc8c" />;
 
   return (
     <View style={styles.container}>
+      <StatusBar backgroundColor="#282828" />
+      <View style={[styles.header, styles.flex]}>
+        <View style={[styles.flexBetween]}>
+          <Text style={styles.px20}></Text>
+          <Text style={styles.title}>{iconCart} Shopping List</Text>
+          <Text
+            style={styles.px20}
+            onPress={() => setbtnsVisible(!btnsVisible)}
+          >
+            {btnsVisible ? iconCU : iconCD}
+          </Text>
+        </View>
+        <View
+          style={[
+            styles.flex,
+            styles.flexRow,
+            styles.mt20,
+            !btnsVisible && styles.dNone,
+          ]}
+        >
+          <Pressable
+            style={[styles.button, styles.warning, styles.flex]}
+            onPress={sortFunction}
+          >
+            <Text>{iconSort}</Text>
+          </Pressable>
+          <Pressable
+            style={[styles.button, styles.danger, styles.flex]}
+            onPress={newListHandler}
+          >
+            <Text>{iconTrash}</Text>
+          </Pressable>
+        </View>
+      </View>
+      <ScrollView>
+        {items.length === 0 ? (
+          <Image style={styles.img} source={require("./assets/image.png")} />
+        ) : (
+          items.map((item, index) => (
+            <View style={styles.itemContainer} key={index}>
+              {item.isSelected ? (
+                <Text
+                  style={[styles.item, styles.flexEnd]}
+                  onPress={() => toggleSelected(index)}
+                >
+                  <Text style={styles.strike}> {item.itemName} </Text>
+                  <Text> {iconSquareV} </Text>
+                </Text>
+              ) : (
+                <Text style={styles.item} onPress={() => toggleSelected(index)}>
+                  <Text> {iconSquare} </Text>
+                  <Text> {item.itemName} </Text>
+                </Text>
+              )}
+            </View>
+          ))
+        )}
+      </ScrollView>
       <Modal
         animationType="slide"
         transparent={true}
@@ -87,6 +148,7 @@ const App = () => {
               value={inputValue}
               placeholder="Enter items here"
               placeholderTextColor="#b5b5b5"
+              autoFocus={true}
             />
             <View style={styles.flexEnd}>
               <Pressable
@@ -114,85 +176,6 @@ const App = () => {
       >
         <Text>{iconPlus}</Text>
       </Pressable>
-      <StatusBar backgroundColor="#102027" />
-
-      <View style={styles.centeredView}>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert("Modal has been closed.");
-            setModalVisible(!modalVisible);
-          }}
-        >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>Hello World!</Text>
-              <TextInput
-                style={styles.input}
-                onChangeText={setInputValue}
-                value={inputValue}
-              />
-              <Pressable
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => setModalVisible(!modalVisible)}
-              >
-                <Text style={styles.textStyle}>Hide Modal</Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal>
-        <Pressable
-          style={[styles.button, styles.buttonOpen]}
-          onPress={() => setModalVisible(true)}
-        >
-          <Text style={styles.textStyle}>Show Modal</Text>
-        </Pressable>
-      </View>
-
-      <View style={[styles.header, styles.flex]}>
-        <Text style={styles.flexBetween}>
-          <Text style={styles.title}>{iconCart} Shopping List</Text>
-          <Text style={styles.flexEnd} onPress={btnAddHandler}>
-            {iconDots}
-          </Text>
-        </Text>
-        <View style={[styles.flex, styles.flexRow]}>
-          <Pressable
-            style={[styles.btn, styles.warning, styles.flex]}
-            onPress={sortFunction}
-          >
-            <Text>{iconSort}</Text>
-          </Pressable>
-          <Pressable
-            style={[styles.btn, styles.danger, styles.flex]}
-            onPress={newListHandler}
-          >
-            <Text>{iconTrash}</Text>
-          </Pressable>
-        </View>
-      </View>
-      <ScrollView>
-        {items.map((item, index) => (
-          <View style={styles.itemContainer} key={index}>
-            {item.isSelected ? (
-              <Text
-                style={[styles.item, styles.flexEnd]}
-                onPress={() => toggleSelected(index)}
-              >
-                <Text style={styles.strike}> {item.itemName} </Text>
-                <Text> {iconCircleV} </Text>
-              </Text>
-            ) : (
-              <Text style={styles.item} onPress={() => toggleSelected(index)}>
-                <Text> {iconCircle} </Text>
-                <Text> {item.itemName} </Text>
-              </Text>
-            )}
-          </View>
-        ))}
-      </ScrollView>
     </View>
   );
 };
@@ -200,45 +183,43 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#37474f",
+    backgroundColor: "#121212",
     alignItems: "center",
+    paddingBottom: 10,
   },
   header: {
     width: windowWidth,
-    backgroundColor: "#37474f",
+    backgroundColor: "#363636",
+    padding: 20,
   },
   title: {
-    alignSelf: "flex-start",
     color: "white",
     fontSize: 25,
-    marginVertical: 10,
   },
   input: {
     height: 40,
-    width: windowWidth - 100,
     fontSize: 16,
     color: "white",
+    width: windowWidth - 80,
     borderWidth: 1,
     borderColor: "white",
     borderRadius: 10,
     padding: 10,
-  },
-  btn: {
-    width: (windowWidth - 60) / 3,
-    height: 40,
-    borderRadius: 10,
-    marginVertical: 10,
+    marginVertical: 20,
   },
   itemContainer: {
-    width: windowWidth,
-    backgroundColor: "white",
-    paddingVertical: 5,
-    paddingHorizontal: 15,
-    marginVertical: 1,
+    width: windowWidth - 40,
+    backgroundColor: "#222222",
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    marginTop: 10,
+    borderRadius: 5,
+    borderColor: "#3d3d3d",
+    borderWidth: 1,
   },
   item: {
     fontSize: 20,
-    color: "black",
+    color: "white",
     alignSelf: "flex-start",
   },
   strike: {
@@ -252,16 +233,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   flexBetween: {
-    width: windowWidth,
+    width: windowWidth - 40,
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
   flexEnd: {
     flexDirection: "row",
     alignSelf: "flex-end",
-  },
-  flexCenter: {
-    alignSelf: "flex-center",
   },
   success: {
     backgroundColor: "#00bc8c",
@@ -293,16 +272,17 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   button: {
+    width: 80,
     borderRadius: 5,
     padding: 10,
-    margin: 10,
+    marginStart: 20,
     elevation: 2,
   },
   buttonOpen: {
     position: "absolute",
     width: 60,
     height: 60,
-    backgroundColor: "#00bc8c",
+    backgroundColor: "#2196f3",
     borderRadius: 30,
     bottom: 20,
     right: 20,
@@ -315,58 +295,25 @@ const styles = StyleSheet.create({
   },
   modalText: {
     color: "white",
-    marginBottom: 15,
     fontSize: 20,
     fontWeight: "bold",
   },
   opacity: {
     height: windowHeight,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
   },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22,
+  mt20: {
+    marginTop: 20,
   },
-  modalView: {
-    margin: 20,
-    backgroundColor: "#464646",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+  px20: {
+    paddingHorizontal: 20,
   },
-  button: {
-    position: "absolute",
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-    bottom: 20,
-    left: 20,
+  dNone: {
+    display: "none",
   },
-  buttonOpen: {
-    backgroundColor: "#F194FF",
-  },
-  buttonClose: {
-    backgroundColor: "#2196F3",
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  modalText: {
-    color: "white",
-    marginBottom: 15,
-    textAlign: "center",
+  img: {
+    width: windowWidth,
+    resizeMode: "contain",
   },
 });
 
