@@ -4,6 +4,7 @@ import {
   Alert,
   Dimensions,
   Pressable,
+  Modal,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -18,13 +19,17 @@ const App = () => {
   const [items, setItems] = useState([]);
   const [inputValue, setInputValue] = useState("");
 
+  const [modalVisible, setModalVisible] = useState(false);
+
   const btnAddHandler = () => {
     if (inputValue !== "") {
-      let array = inputValue.split(",").reverse();
-      array = array.map(
-        (el) =>
-          el !== "" && { itemName: el.trim().toLowerCase(), isSelected: false }
-      );
+      const array = inputValue
+        .split(",")
+        .reverse()
+        .filter((el) => el !== "")
+        .map((el) => {
+          return { itemName: el.trim().toLowerCase(), isSelected: false };
+        });
       const newItems = [...array, ...items];
       setItems(newItems);
       setInputValue("");
@@ -59,6 +64,42 @@ const App = () => {
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#102027" />
+
+      <View style={styles.centeredView}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>Hello World!</Text>
+              <TextInput
+                style={styles.input}
+                onChangeText={setInputValue}
+                value={inputValue}
+              />
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <Text style={styles.textStyle}>Hide Modal</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+        <Pressable
+          style={[styles.button, styles.buttonOpen]}
+          onPress={() => setModalVisible(true)}
+        >
+          <Text style={styles.textStyle}>Show Modal</Text>
+        </Pressable>
+      </View>
+
       <View style={[styles.header, styles.flex]}>
         <Text style={styles.title}>Shopping List</Text>
         <TextInput
@@ -114,7 +155,7 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "gray",
+    backgroundColor: "#37474f",
     alignItems: "center",
   },
   header: {
@@ -127,10 +168,12 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   input: {
-    backgroundColor: "white",
     height: 40,
     fontSize: 16,
     width: windowWidth - 40,
+    borderColor: "black",
+    borderStyle: "solid",
+    borderWidth: 1,
     borderRadius: 10,
     padding: 10,
   },
@@ -179,6 +222,51 @@ const styles = StyleSheet.create({
   border: {
     borderBottomColor: "black",
     borderBottomWidth: 1,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "#464646",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    position: "absolute",
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    bottom: 20,
+    left: 20,
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    color: "white",
+    marginBottom: 15,
+    textAlign: "center",
   },
 });
 
