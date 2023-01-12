@@ -20,9 +20,10 @@ const windowHeight = Dimensions.get("window").height;
 
 const App = () => {
   const [items, setItems] = useState([]);
+  const [input, setInput] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  const [btnsVisible, setbtnsVisible] = useState(false);
+  const [btnsVisible, setBtnsVisible] = useState(false);
 
   const btnAddHandler = () => {
     if (inputValue !== "") {
@@ -53,7 +54,13 @@ const App = () => {
 
   const newListHandler = () => {
     return Alert.alert("Are you sure?", "This will delete all items.", [
-      { text: "Yes", onPress: () => setItems([]) },
+      {
+        text: "Yes",
+        onPress: () => {
+          setItems([]);
+          setBtnsVisible(false);
+        },
+      },
       { text: "No" },
     ]);
   };
@@ -64,8 +71,8 @@ const App = () => {
   const iconPlus = <Icon name="plus" size={26} color="#fff" />;
   const iconTrash = <Icon name="trash-alt" size={26} color="#fff" />;
   const iconCart = <Icon name="shopping-basket" size={26} color="#fff" />;
-  const iconCD = <Icon name="chevron-circle-down" size={26} color="#2196f3" />;
-  const iconCU = <Icon name="chevron-circle-up" size={26} color="#00bc8c" />;
+  const iconCD = <Icon name="chevron-circle-down" size={35} color="#2196f3" />;
+  const iconCU = <Icon name="chevron-circle-up" size={35} color="#00bc8c" />;
 
   return (
     <View style={styles.container}>
@@ -79,7 +86,7 @@ const App = () => {
           ) : (
             <Text
               style={styles.px20}
-              onPress={() => setbtnsVisible(!btnsVisible)}
+              onPress={() => setBtnsVisible(!btnsVisible)}
             >
               {btnsVisible ? iconCU : iconCD}
             </Text>
@@ -131,47 +138,54 @@ const App = () => {
           ))
         )}
       </ScrollView>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <KeyboardAvoidingView
-          behavior="padding"
-          style={[styles.flex, styles.opacity]}
+      {modalVisible && (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          onShow={() => setInput(true)}
         >
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>Add items</Text>
-            <TextInput
-              style={styles.input}
-              onChangeText={setInputValue}
-              value={inputValue}
-              placeholder="Enter items here"
-              placeholderTextColor="#b5b5b5"
-            />
-            <View style={styles.flexEnd}>
-              <Pressable
-                style={[styles.button, styles.danger]}
-                onPress={() => setModalVisible(!modalVisible)}
-              >
-                <Text style={styles.textStyle}>CANCEL</Text>
-              </Pressable>
-              <Pressable
-                style={[styles.button, styles.success]}
-                onPress={() => {
-                  btnAddHandler();
-                  setModalVisible(!modalVisible);
-                }}
-              >
-                <Text style={styles.textStyle}>ADD</Text>
-              </Pressable>
+          <KeyboardAvoidingView
+            behavior="padding"
+            style={[styles.flex, styles.opacity]}
+          >
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>Add items</Text>
+              {input && (
+                <TextInput
+                  style={styles.input}
+                  onChangeText={setInputValue}
+                  value={inputValue}
+                  placeholder="Enter items here"
+                  placeholderTextColor="#b5b5b5"
+                  autoFocus
+                />
+              )}
+              <View style={styles.flexEnd}>
+                <Pressable
+                  style={[styles.button, styles.danger]}
+                  onPress={() => {
+                    setModalVisible(!modalVisible);
+                    setInput(false);
+                  }}
+                >
+                  <Text style={styles.textStyle}>CANCEL</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.button, styles.success]}
+                  onPress={() => {
+                    btnAddHandler();
+                    setModalVisible(!modalVisible);
+                    setInput(false);
+                  }}
+                >
+                  <Text style={styles.textStyle}>ADD</Text>
+                </Pressable>
+              </View>
             </View>
-          </View>
-        </KeyboardAvoidingView>
-      </Modal>
+          </KeyboardAvoidingView>
+        </Modal>
+      )}
+
       <Pressable
         style={[styles.flex, styles.buttonOpen]}
         onPress={() => setModalVisible(true)}
