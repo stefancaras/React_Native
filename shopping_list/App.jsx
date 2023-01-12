@@ -80,7 +80,10 @@ const App = () => {
       <View style={[styles.header, styles.flex]}>
         <View style={[styles.flexBetween]}>
           <Text style={styles.px20}></Text>
-          <Text style={styles.title}>{iconCart} Shopping List</Text>
+          <Text style={styles.title}>
+            {iconCart}
+            {"  "}Shopping List
+          </Text>
           {items.length === 0 ? (
             <Text style={styles.px20}></Text>
           ) : (
@@ -92,27 +95,22 @@ const App = () => {
             </Text>
           )}
         </View>
-        <View
-          style={[
-            styles.flex,
-            styles.flexRow,
-            styles.mt20,
-            !btnsVisible && styles.dNone,
-          ]}
-        >
-          <Pressable
-            style={[styles.button, styles.warning, styles.flex]}
-            onPress={sortFunction}
-          >
-            <Text>{iconSort}</Text>
-          </Pressable>
-          <Pressable
-            style={[styles.button, styles.danger, styles.flex]}
-            onPress={newListHandler}
-          >
-            <Text>{iconTrash}</Text>
-          </Pressable>
-        </View>
+        {btnsVisible && (
+          <View style={[styles.flex, styles.flexRow, styles.mt20]}>
+            <Pressable
+              style={[styles.button, styles.warning, styles.flex]}
+              onPress={sortFunction}
+            >
+              <Text>{iconSort}</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.button, styles.danger, styles.flex]}
+              onPress={newListHandler}
+            >
+              <Text>{iconTrash}</Text>
+            </Pressable>
+          </View>
+        )}
       </View>
       <ScrollView>
         {items.length === 0 ? (
@@ -120,20 +118,16 @@ const App = () => {
         ) : (
           items.map((item, index) => (
             <View style={styles.itemContainer} key={index}>
-              {item.isSelected ? (
-                <Text
-                  style={[styles.item, styles.flexEnd]}
-                  onPress={() => toggleSelected(index)}
-                >
-                  <Text style={styles.strike}> {item.itemName} </Text>
-                  <Text> {iconSquareV} </Text>
+              <Text style={styles.item} onPress={() => toggleSelected(index)}>
+                <Text>
+                  {item.isSelected ? iconSquareV : iconSquare}
+                  {"  "}
                 </Text>
-              ) : (
-                <Text style={styles.item} onPress={() => toggleSelected(index)}>
-                  <Text> {iconSquare} </Text>
-                  <Text> {item.itemName} </Text>
+                <Text style={item.isSelected && styles.strike}>
+                  {" "}
+                  {item.itemName}{" "}
                 </Text>
-              )}
+              </Text>
             </View>
           ))
         )}
@@ -226,8 +220,6 @@ const styles = StyleSheet.create({
   itemContainer: {
     width: windowWidth - 40,
     backgroundColor: "#222222",
-    paddingVertical: 10,
-    paddingHorizontal: 10,
     marginTop: 10,
     borderRadius: 5,
     borderColor: "#3d3d3d",
@@ -237,6 +229,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "white",
     alignSelf: "flex-start",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
   },
   strike: {
     textDecorationLine: "line-through",
@@ -323,9 +317,6 @@ const styles = StyleSheet.create({
   },
   px20: {
     paddingHorizontal: 20,
-  },
-  dNone: {
-    display: "none",
   },
   img: {
     width: windowWidth,
