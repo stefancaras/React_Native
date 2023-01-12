@@ -3,7 +3,6 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import {
   Alert,
   Dimensions,
-  FlatList,
   Image,
   KeyboardAvoidingView,
   Modal,
@@ -75,12 +74,16 @@ const App = () => {
         <View style={[styles.flexBetween]}>
           <Text style={styles.px20}></Text>
           <Text style={styles.title}>{iconCart} Shopping List</Text>
-          <Text
-            style={styles.px20}
-            onPress={() => setbtnsVisible(!btnsVisible)}
-          >
-            {btnsVisible ? iconCU : iconCD}
-          </Text>
+          {items.length === 0 ? (
+            <Text style={styles.px20}></Text>
+          ) : (
+            <Text
+              style={styles.px20}
+              onPress={() => setbtnsVisible(!btnsVisible)}
+            >
+              {btnsVisible ? iconCU : iconCD}
+            </Text>
+          )}
         </View>
         <View
           style={[
@@ -106,7 +109,7 @@ const App = () => {
       </View>
       <ScrollView>
         {items.length === 0 ? (
-          <Image style={styles.img} source={require("./assets/image.png")} />
+          <Image style={styles.img} source={require("./assets/image2.png")} />
         ) : (
           items.map((item, index) => (
             <View style={styles.itemContainer} key={index}>
@@ -148,7 +151,6 @@ const App = () => {
               value={inputValue}
               placeholder="Enter items here"
               placeholderTextColor="#b5b5b5"
-              autoFocus={true}
             />
             <View style={styles.flexEnd}>
               <Pressable
@@ -313,7 +315,8 @@ const styles = StyleSheet.create({
   },
   img: {
     width: windowWidth,
-    resizeMode: "contain",
+    height: windowWidth * 1.5,
+    resizeMode: "center",
   },
 });
 
